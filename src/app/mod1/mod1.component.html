@@ -119,6 +119,18 @@
         <br><button (click)="toggleDE()">Включить/отключить поле "Заголовок"</button>
     </p>
 
+    <p>
+        <label>Сумма</label>
+        &nbsp;<input type="text" formControlName="sum">
+        <br>
+        <span>{{hint1}}</span>
+        <br>
+        <span>{{hint}}</span>
+    </p>
+
+    
+    
+    <p></p>
     <div formArrayName="phones"> <!-- здесь phones берется из объекта reactivFormBuilder -->
     
         <!-- <p *ngFor="let phone of reactivFormBuilder.value.phones.control"></p> 

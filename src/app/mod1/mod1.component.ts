@@ -14,7 +14,8 @@ export class Mod1Component implements OnInit {
   name1 = '';
   description1 = '';
 
-  toggle: boolean;
+  hint: string;
+  hint1: string;
 
   reactivForm1 = new FormGroup({
     name: new FormControl(),
@@ -31,16 +32,17 @@ export class Mod1Component implements OnInit {
       phones: fb.array([['+7955123456'], ['+7983654321'], ['+7995987654']]),
       age: fb.control(null,[Validators.min(10), Validators.max(100)]),
       title: [{value:null, disabled:true},Validators.required],
+      sum: [0,Validators.pattern('[0-9]*')],
     });
 
-    this.reactivFormBuilder.get('name').valueChanges.subscribe(value => {
-      if (value === "Привет") {
-        this.reactivFormBuilder.get('description').setValue(value);
+    this.reactivFormBuilder.get('sum').valueChanges.subscribe(value => {
+      if (value != 0) {
+        this.hint1 = 'Сумма была изменена! Новое значение = '+value + ' Старое значение = '+ this.reactivFormBuilder.value['sum'];
       }
     })
 
-    this.reactivFormBuilder.get('title').statusChanges.subscribe(newStatus => {
-      this.reactivFormBuilder.get('description').setValue('Статус изменился, новый статус: ' + this.reactivFormBuilder.get('title').status);
+    this.reactivFormBuilder.get('sum').statusChanges.subscribe(newStatus => {
+      this.hint = 'Статус изменился, новый статус: ' + this.reactivFormBuilder.get('sum').status;
     })
   }
 
