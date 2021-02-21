@@ -1,0 +1,150 @@
+<div>
+<p>
+    <label>name</label>
+    <input type="text" [(ngModel)]="form1.name"> 
+    {{form1.name}}
+</p>
+<p>
+    <label>Description</label>
+    <input type="text" [(ngModel)]="form1.description"> 
+    {{form1.description}}
+</p>
+</div>
+<div>name: {{form1.name}}</div>
+<div>description: {{form1.description}}</div>
+<hr>
+<h1>Работа с ngForm</h1>
+<form #myForm1="ngForm">    <!-- директива ngForm -->
+    <p>
+        <label>name</label>
+        <input type="text" name="name1" [(ngModel)]="name1"> 
+        {{name1}}
+    </p>
+    <p>
+        <label>Description</label>
+        <input type="text" name="description1" [(ngModel)]="description1"> 
+        {{description1}}
+    </p>
+
+    <div>name: {{myForm1.value.name1}}</div>
+    <div>description: {{myForm1.value.description1}}</div>
+    
+<!-- Можно использовать для отладки     
+    <pre>name: {{myForm1.control | json}}</pre>
+    <pre>name: {{myForm1.value | json}}</pre> -->
+
+    <pre>name: {{myForm1.value | json}}</pre>
+
+</form>
+<hr>
+<h1>Работа с реактивными формами</h1>
+<form [formGroup]="reactivForm1">    <!-- директива formGroup -->
+    <p>
+        <label>name</label>
+        <input type="text" name="name" formControlName="name"> 
+        {{reactivForm1.value.name}}
+    </p>
+    <p>
+        <label>Description</label>
+        <input type="text" name="description" formControlName="description"> 
+        {{reactivForm1.value.description}}
+    </p>
+  
+    <pre>Содержимое reactivForm1: {{reactivForm1.value | json}}</pre>
+</form>
+
+<hr>
+<h1>Работа с реактивными формами через FormBuilder</h1>
+<form [formGroup]="reactivFormBuilder">    
+    <p>
+        <label>name</label>
+        <input type="text" name="name" formControlName="name"> 
+        {{reactivFormBuilder.value.name}}
+    </p>
+    <p>
+        <label>Description</label>
+        <input type="text" name="description" formControlName="description"> 
+        {{reactivFormBuilder.value.description}}
+    </p>
+  
+    <pre>Содержимое reactivFormBuilder: {{reactivFormBuilder.value | json}}</pre>
+</form>
+
+<hr>
+<h1>Работа с реактивными формами через FormBuilder с использованием массивов</h1>
+<!-- <form [formGroup]="reactivFormBuilder" novalidate>     novalidate - директива angular которая отключает стандартную валидацию HTML, работает только для ngForm -->
+<form [formGroup]="reactivFormBuilder">
+    <p>
+        <label>Имя</label>
+        &nbsp;<input type="text" name="name" formControlName="name">
+        <br>
+        <span *ngIf="reactivFormBuilder.get('name').dirty">Поле было изменено</span> <!-- показывает, что поле изменяли хотя бы раз -->
+        <span *ngIf="reactivFormBuilder.get('name').pristine">Поле не изменяли</span> <!-- показывает, что поле не изменяли -->
+        <br>
+        <span *ngIf="reactivFormBuilder.get('name').valid">Поле заполнено</span>
+        <span *ngIf="reactivFormBuilder.get('name').invalid">Требуется заполнить поле</span>
+        <br>Статус: &nbsp; <code>{{reactivFormBuilder.get('name').status}}</code>
+        <!-- status бывает 4 видов: valid, invalid, pending - в процессе - актуально для долгих(серверных) валидаций, disabled -->
+    </p>
+    <p>
+        <label>Описание</label>
+        &nbsp;<input type="text" name="description" formControlName="description" size="40"> 
+        <br>
+        <span *ngIf="reactivFormBuilder.get('description').touched">с полем было взаимодействие</span> <!-- показывает, что поле изменяли хотя бы раз -->
+        <span *ngIf="reactivFormBuilder.get('description').untouched">с полем не было взаимодействия</span>
+        <br>
+        <span *ngIf="reactivFormBuilder.get('description').valid">Поле заполнено</span> <!-- показывает, что поле изменяли хотя бы раз -->
+        <span *ngIf="reactivFormBuilder.get('description').invalid">Требуется заполнить поле</span>
+    </p>
+    <p>
+        <label>Возраст</label>
+        <!-- <input type="number" formControlName="age" min="10" max="100">   min и max - стандартные HTML валидаторы-->
+        <!-- <input type="number" formControlName="age" min="10" max="100">      name="age" в реактивных формах можно не указывать -->
+        &nbsp; <input type="number" formControlName="age">
+        <br>
+        <span *ngIf="getAge.getError('min')">Поле не может быть меньше {{getAge.getError('min').min}}</span>
+        <span *ngIf="getAge.getError('max')">Поле не может быть больше {{getAge.getError('max').max}}</span>
+        <br>
+        <!-- <code>Проверка валидаторов: {{getAge().errors | json}}</code> -->
+    </p>
+
+    <p>
+        <label>Заголовок</label>
+        &nbsp;<input type="text" name="title" formControlName="title" size="40">
+        <br>
+        <span *ngIf="reactivFormBuilder.get('title').disabled">Поле не активно</span>
+        <span *ngIf="reactivFormBuilder.get('title').enabled">Поле активно</span>
+        <br>Статус поля: &nbsp; <code>{{reactivFormBuilder.get('title').status}}</code>
+        <!-- status бывает 4 видов: valid, invalid, pending - в процессе - актуально для долгих(серверных) валидаций, disabled -->
+        <br><button (click)="toggleDE()">Включить/отключить поле "Заголовок"</button>
+    </p>
+
+    <div formArrayName="phones"> <!-- здесь phones берется из объекта reactivFormBuilder -->
+    
+        <!-- <p *ngFor="let phone of reactivFormBuilder.value.phones.control"></p> 
+            альтернативный вариант вывода значений через value, но value не позволяет изменять значения-->
+
+            <!-- далее берется через controls -->
+        <ul *ngFor="let phone of getPhones.controls">
+            <li>{{phone.value}}</li>
+        </ul>
+
+        <!-- альтернативное представление -->
+        <p *ngFor="let phone of getPhones.controls; let i=index">
+            <label>{{i}}</label>
+            &nbsp;<input type="text" [formControlName]="i">
+        </p>
+    </div>
+    <button (click)="refresh()">Refresh</button>
+    <pre>Содержимое reactivFormBuilder: {{reactivFormBuilder.value | json}}</pre>
+</form>
+
+
+<!-- Домашнее задание:
+посмотреть как описываются Y
+valueChanges: Observable<any>
+  statusChanges: Observable<any>
+
+как делается подписка: 
+1) через callBack
+2) через метод subscription -->
